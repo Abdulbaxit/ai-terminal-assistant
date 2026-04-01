@@ -11,6 +11,7 @@ Built to return clear, developer-focused terminal commands and explanations usin
 ---
 
 ## ✨ Features
+
 - **Global Command:** Ask questions from absolutely any directory.
 - **Developer-Focused Prompting:** The AI acts as a senior engineer, skipping the conversational bloat and just giving you the exact command or answer you need.
 - **Secure Configuration:** Safely stores your API key locally in the `~/.ask-ai-config.json` hidden file.
@@ -19,17 +20,20 @@ Built to return clear, developer-focused terminal commands and explanations usin
 ## 🚀 Installation & Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/Abdulbaxit/ai-terminal-assistant.git
    cd ai-terminal-assistant
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Configure your OpenAI API Key:**
+
    ```bash
    node ./bin/index.js config --key sk-YOUR_KEY_HERE
    ```
@@ -39,7 +43,7 @@ Built to return clear, developer-focused terminal commands and explanations usin
    ```bash
    alias ask="node /path/to/ai-terminal-assistant/bin/index.js"
    ```
-   *Run `source ~/.zshrc` after saving!*
+   _Run `source ~/.zshrc` after saving!_
 
 ## 💡 Usage
 
@@ -48,15 +52,18 @@ Whenever you are stuck or need a terminal command, just type `ask` followed by y
 ```bash
 ask "How do I cleanly undo my last git commit without losing my files?"
 ```
+
 ```bash
 ask "Find all processes running on port 3000 and kill them"
 ```
 
 ## 🛠️ Built With
+
 - **Node.js**
 - **OpenAI API**
 - **Commander.js** (CLI Router)
 - **Chalk & Ora** (Terminal styling)
 
 ---
-*Built with ❤️ by [Abdul Basit](https://github.com/Abdulbaxit)*
+
+_Built by [Abdul Basit](https://github.com/Abdulbaxit)_
