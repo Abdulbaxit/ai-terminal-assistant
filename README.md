@@ -6,7 +6,7 @@
 
 A lightning-fast, highly concise AI tool that lives directly inside your terminal. Stop switching to your browser to search for commands—just ask your terminal
 
-Built to return clear, developer-focused terminal commands and explanations using the OpenAI `gpt-3.5-turbo` model.
+Built to return clear, developer-focused terminal commands and explanations using the OpenAI `gpt-3.5-turbo` model
 
 ---
 
