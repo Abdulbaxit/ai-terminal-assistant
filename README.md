@@ -66,4 +66,4 @@ ask "Find all processes running on port 3000 and kill them"
 
 ---
 
-_Built by [Abdul Basit](https://github.com/Abdulbaxit)_
+Built by [Abdul Basit](https://github.com/Abdulbaxit)
