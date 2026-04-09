@@ -2,14 +2,14 @@ import OpenAI from 'openai';
 import chalk from 'chalk';
 import ora from 'ora';
 
-export async function askAI(prompt, apiKey) {
-  const spinner = ora('Asking AI...').start();
+export async function askAI(prompt, apiKey, model = 'gpt-3.5-turbo') {
+  const spinner = ora('Thinking...').start();
 
   try {
     const openai = new OpenAI({ apiKey });
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+    const stream = await openai.chat.completions.create({
+      model: model,
       messages: [
         {
           role: 'system',
@@ -21,13 +21,21 @@ export async function askAI(prompt, apiKey) {
         }
       ],
       temperature: 0.3,
+      stream: true,
     });
 
     spinner.stop();
-    
-    const reply = response.choices[0].message.content;
     console.log('\n' + chalk.cyan('🤖 AI:') + '\n');
-    console.log(reply + '\n');
+
+    let fullResponse = '';
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || '';
+      if (content) {
+        process.stdout.write(content);
+        fullResponse += content;
+      }
+    }
+    console.log('\n');
 
   } catch (error) {
     spinner.stop();

@@ -14,19 +14,26 @@ program
 
 program
   .command('config')
-  .description('Configure the AI CLI (e.g. set API key)')
+  .description('Configure the AI CLI (e.g. set API key, model)')
   .option('-k, --key <key>', 'Set your OpenAI API Key')
+  .option('-m, --model <model>', 'Set your preferred OpenAI model (e.g. gpt-4, gpt-3.5-turbo)')
   .action((options) => {
     if (options.key) {
       saveConfig({ apiKey: options.key });
       console.log(chalk.green('✅ API Key saved successfully!'));
-    } else {
+    }
+    
+    if (options.model) {
+      saveConfig({ model: options.model });
+      console.log(chalk.green(`✅ Default model set to: ${options.model}`));
+    }
+
+    if (!options.key && !options.model) {
       const config = loadConfig();
-      if (config.apiKey) {
-        console.log(chalk.blue('API Key is currently set.'));
-      } else {
-        console.log(chalk.yellow('No API Key found. Use `ask config --key <YOUR_KEY>` to set it.'));
-      }
+      console.log(chalk.blue('\n--- Current Configuration ---'));
+      console.log(chalk.white(`API Key: ${config.apiKey ? '********' + config.apiKey.slice(-4) : 'Not Set'}`));
+      console.log(chalk.white(`Model:   ${config.model}`));
+      console.log(chalk.blue('-----------------------------\n'));
     }
   });
 
@@ -47,7 +54,7 @@ program
       process.exit(1);
     }
 
-    await askAI(prompt, config.apiKey);
+    await askAI(prompt, config.apiKey, config.model);
   });
 
 program.parse(process.argv);
