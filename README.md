@@ -62,6 +62,12 @@ Whenever you are stuck or need a terminal command, just type `ask` followed by y
 ask "How do I cleanly undo my last git commit without losing my files?"
 ```
 
+For a continuous session or debugging complex tasks, use **Interactive Mode**:
+
+```bash
+ask chat
+```
+
 ```bash
 ask "Find all processes running on port 3000 and kill them"
 ```

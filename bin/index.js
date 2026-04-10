@@ -2,6 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import readline from 'readline';
 import { loadConfig, saveConfig } from '../src/config.js';
 import { askAI } from '../src/ai.js';
 
@@ -35,6 +36,60 @@ program
       console.log(chalk.white(`Model:   ${config.model}`));
       console.log(chalk.blue('-----------------------------\n'));
     }
+  });
+
+program
+  .command('chat')
+  .description('Start an interactive chat session with the AI')
+  .action(async () => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('❌ OpenAI API Key is missing.'));
+      console.log(chalk.yellow('Please set it using: ask config --key <YOUR_KEY>'));
+      process.exit(1);
+    }
+
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      prompt: chalk.yellow('You: ')
+    });
+
+    console.log(chalk.cyan('\n--- Interactive Session Started (Type "exit" or "quit" to stop) ---'));
+    
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a highly capable terminal developer assistant. Provide concise, accurate terminal commands and briefly explain them if necessary. Format terminal commands cleanly.'
+      }
+    ];
+
+    rl.prompt();
+
+    rl.on('line', async (line) => {
+      const input = line.trim();
+      if (input.toLowerCase() === 'exit' || input.toLowerCase() === 'quit') {
+        rl.close();
+        return;
+      }
+
+      if (!input) {
+        rl.prompt();
+        return;
+      }
+
+      messages.push({ role: 'user', content: input });
+      
+      const response = await askAI(messages, config.apiKey, config.model);
+      if (response) {
+        messages.push({ role: 'assistant', content: response });
+      }
+      
+      rl.prompt();
+    }).on('close', () => {
+      console.log(chalk.cyan('\n--- Session Ended ---\n'));
+      process.exit(0);
+    });
   });
 
 program
