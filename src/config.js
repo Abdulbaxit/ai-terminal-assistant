@@ -2,18 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-const CONFIG_FILE = path.join(os.homedir(), '.ask-ai-config.json');
+const DEFAULT_CONFIG = {
+  model: 'gpt-3.5-turbo'
+};
 
 export function loadConfig() {
   if (fs.existsSync(CONFIG_FILE)) {
     try {
       const data = fs.readFileSync(CONFIG_FILE, 'utf-8');
-      return JSON.parse(data);
+      return { ...DEFAULT_CONFIG, ...JSON.parse(data) };
     } catch (e) {
-      return {};
+      return DEFAULT_CONFIG;
     }
   }
-  return {};
+  return DEFAULT_CONFIG;
 }
 
 export function saveConfig(newConfig) {

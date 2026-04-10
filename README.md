@@ -4,14 +4,16 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-000000?style=for-the-badge&logo=openai)
 ![Commander.js](https://img.shields.io/badge/Commander.js-E34F26?style=for-the-badge)
 
-A lightning-fast, highly concise AI tool that lives directly inside your terminal. Stop switching to your browser to search for commands—just ask your terminal
+A lightning-fast, highly concise AI tool that lives directly inside your terminal. Stop switching to your browser to search for commands—just ask your terminal.
 
-Built to return clear, developer-focused terminal commands and explanations using the OpenAI `gpt-3.5-turbo` model
+Built to return clear, developer-focused terminal commands and explanations using OpenAI's latest models.
 
 ---
 
 ## ✨ Features
 
+- **Streaming Responses:** Get real-time answers directly in your terminal, no more waiting for the full response.
+- **Model Selection:** Switch between different OpenAI models like `gpt-4-turbo` or `gpt-3.5-turbo`.
 - **Global Command:** Ask questions from absolutely any directory.
 - **Developer-Focused Prompting:** The AI acts as a senior engineer, skipping the conversational bloat and just giving you the exact command or answer you need.
 - **Secure Configuration:** Safely stores your API key locally in the `~/.ask-ai-config.json` hidden file.
@@ -32,10 +34,17 @@ Built to return clear, developer-focused terminal commands and explanations usin
    npm install
    ```
 
-3. **Configure your OpenAI API Key:**
+3. **Configure your OpenAI API Key & Model:**
 
    ```bash
-   node ./bin/index.js config --key sk-YOUR_KEY_HERE
+   # Set API Key
+   ask config --key sk-YOUR_KEY_HERE
+
+   # Set Preferred Model (Optional, defaults to gpt-3.5-turbo)
+   ask config --model gpt-4-turbo
+
+   # View current config
+   ask config
    ```
 
 4. **Create a global alias:**
