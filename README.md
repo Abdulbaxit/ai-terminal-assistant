@@ -12,6 +12,9 @@ Built to return clear, developer-focused terminal commands and explanations usin
 
 ## ✨ Features
 
+- **Copy-to-Clipboard:** Instantly copy suggested commands with a single keystroke (`y`).
+- **Command Execution:** Run suggested commands directly from the assistant after confirmation.
+- **Interactive Mode:** Start a continuous conversation with the AI using `ask chat`.
 - **Streaming Responses:** Get real-time answers directly in your terminal, no more waiting for the full response.
 - **Model Selection:** Switch between different OpenAI models like `gpt-4-turbo` or `gpt-3.5-turbo`.
 - **Global Command:** Ask questions from absolutely any directory.

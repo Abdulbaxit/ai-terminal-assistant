@@ -48,3 +48,15 @@ export async function askAI(promptOrMessages, apiKey, model = 'gpt-3.5-turbo') {
     return null;
   }
 }
+
+export function extractCodeBlock(text) {
+  // Regex to find code blocks like ```bash ... ``` or just ``` ... ```
+  const regex = /```(?:\w+)?\n([\s\S]*?)```/;
+  const match = text.match(regex);
+  if (match) return match[1].trim();
+  
+  // If no code block, return the whole text if it looks like a one-liner command
+  if (text.length < 100 && !text.includes('\n')) return text.trim();
+  
+  return null;
+}
