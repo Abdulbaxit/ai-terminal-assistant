@@ -3,10 +3,50 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import readline from 'readline';
+import { exec } from 'child_process';
 import { loadConfig, saveConfig } from '../src/config.js';
-import { askAI } from '../src/ai.js';
+import { askAI, extractCodeBlock } from '../src/ai.js';
 
 const program = new Command();
+
+async function handleAIResponse(response) {
+  const code = extractCodeBlock(response);
+  if (!code) return;
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  const question = (query) => new Promise((resolve) => rl.question(query, resolve));
+
+  console.log(chalk.gray(`\n💡 Detected command: ${chalk.white(code)}`));
+  
+  const answer = await question(chalk.green('👉 Copy to clipboard? (y/n) ') + chalk.gray('[y]: '));
+  if (answer.toLowerCase() === 'y' || answer === '') {
+    // Cross-platform copy (mostly Mac focused here with pbcopy)
+    const copyCmd = process.platform === 'darwin' ? 'pbcopy' : 'clip'; // 'clip' for windows
+    const proc = exec(copyCmd);
+    proc.stdin.write(code);
+    proc.stdin.end();
+    console.log(chalk.green('✅ Copied to clipboard!'));
+  }
+
+  const runChoice = await question(chalk.red('🚀 Run this command? (y/n) ') + chalk.gray('[n]: '));
+  if (runChoice.toLowerCase() === 'y') {
+    console.log(chalk.yellow(`\nExecuting: ${code}\n`));
+    exec(code, (error, stdout, stderr) => {
+      if (error) {
+        console.error(chalk.red(`Error: ${error.message}`));
+        return;
+      }
+      if (stderr) console.error(chalk.red(stderr));
+      if (stdout) console.log(stdout);
+    });
+  }
+
+  rl.close();
+}
 
 program
   .name('ask')
@@ -109,7 +149,10 @@ program
       process.exit(1);
     }
 
-    await askAI(prompt, config.apiKey, config.model);
+    const resp = await askAI(prompt, config.apiKey, config.model);
+    if (resp) {
+      await handleAIResponse(resp);
+    }
   });
 
 program.parse(process.argv);
