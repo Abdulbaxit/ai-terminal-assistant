@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import readline from 'readline';
 import { exec } from 'child_process';
-import { loadConfig, saveConfig } from '../src/config.js';
+import { loadConfig, saveConfig, loadHistory, saveHistory, clearHistory } from '../src/config.js';
 import { askAI, extractCodeBlock } from '../src/ai.js';
 
 const program = new Command();
@@ -123,6 +123,7 @@ program
       const response = await askAI(messages, config.apiKey, config.model);
       if (response) {
         messages.push({ role: 'assistant', content: response });
+        saveHistory({ type: 'chat', prompt: input, response: response.trim() });
       }
       
       rl.prompt();
@@ -130,6 +131,36 @@ program
       console.log(chalk.cyan('\n--- Session Ended ---\n'));
       process.exit(0);
     });
+  });
+
+program
+  .command('history')
+  .description('View or manage your past AI interactions')
+  .option('-c, --clear', 'Clear the history')
+  .action((options) => {
+    if (options.clear) {
+      clearHistory();
+      console.log(chalk.green('✅ History cleared!'));
+      return;
+    }
+
+    const history = loadHistory();
+    if (history.length === 0) {
+      console.log(chalk.yellow('No history found.'));
+      return;
+    }
+
+    console.log(chalk.blue('\n--- History ---'));
+    history.forEach((entry, i) => {
+      const typeLabel = entry.type === 'chat' ? chalk.magenta('[Chat]') : chalk.cyan('[Command]');
+      const date = new Date(entry.timestamp).toLocaleString();
+      console.log(`${chalk.gray(i + 1 + '.')} ${typeLabel} ${chalk.white(entry.prompt)} ${chalk.gray(`(${date})`)}`);
+      
+      // Optionally print a short snippet of the answer
+      const snippet = entry.response.split('\n')[0].substring(0, 60) + '...';
+      console.log(`   ${chalk.green('↳')} ${chalk.gray(snippet)}`);
+    });
+    console.log(chalk.blue('---------------\n'));
   });
 
 program
@@ -151,6 +182,7 @@ program
 
     const resp = await askAI(prompt, config.apiKey, config.model);
     if (resp) {
+      saveHistory({ type: 'command', prompt: prompt, response: resp.trim() });
       await handleAIResponse(resp);
     }
   });
