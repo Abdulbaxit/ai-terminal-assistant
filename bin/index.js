@@ -4,6 +4,8 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import readline from 'readline';
 import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 import { loadConfig, saveConfig, loadHistory, saveHistory, clearHistory } from '../src/config.js';
 import { askAI, extractCodeBlock } from '../src/ai.js';
 
@@ -165,13 +167,33 @@ program
 
 program
   .argument('[prompt...]', 'The question you want to ask the AI')
-  .action(async (promptArr) => {
+  .option('-f, --file <path>', 'Include a file as context for the AI')
+  .action(async (promptArr, options) => {
     if (!promptArr || promptArr.length === 0) {
       program.help();
       return;
     }
     
-    const prompt = promptArr.join(' ');
+    let prompt = promptArr.join(' ');
+    
+    // Feature: File Context
+    if (options.file) {
+      const filePath = path.resolve(process.cwd(), options.file);
+      if (fs.existsSync(filePath)) {
+        try {
+          const fileContent = fs.readFileSync(filePath, 'utf-8');
+          console.log(chalk.gray(`📎 Attached context from: ${options.file}`));
+          prompt += `\n\n--- Context from ${options.file} ---\n${fileContent}\n--- End Context ---\n`;
+        } catch (e) {
+          console.error(chalk.red(`❌ Failed to read file ${options.file}: ${e.message}`));
+          process.exit(1);
+        }
+      } else {
+        console.error(chalk.red(`❌ File not found: ${options.file}`));
+        process.exit(1);
+      }
+    }
+
     const config = loadConfig();
     
     if (!config.apiKey) {
@@ -182,7 +204,7 @@ program
 
     const resp = await askAI(prompt, config.apiKey, config.model);
     if (resp) {
-      saveHistory({ type: 'command', prompt: prompt, response: resp.trim() });
+      saveHistory({ type: 'command', prompt: promptArr.join(' '), response: resp.trim() });
       await handleAIResponse(resp);
     }
   });
