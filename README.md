@@ -14,6 +14,7 @@ Built to return clear developer-focused terminal commands and explanations using
 
 - **Copy-to-Clipboard:** Instantly copy suggested commands with a single keystroke (`y`).
 - **Command Execution:** Run suggested commands directly from the assistant after confirmation.
+- **File Context:** Pass local files directly to the AI for debugging or refactoring (`-f <path>`).
 - **Interactive Mode:** Start a continuous conversation with the AI using `ask chat`.
 - **Command History:** View and manage past prompts and AI responses using `ask history`.
 - **Streaming Responses:** Get real-time answers directly in your terminal, no more waiting for the full response.
@@ -79,8 +80,10 @@ ask history
 ask history --clear
 ```
 
+You can also pass files to the AI for context using the `-f` or `--file` flag:
+
 ```bash
-ask "Find all processes running on port 3000 and kill them"
+ask "Refactor this function to use async/await" -f src/utils.js
 ```
 
 ## 🛠️ Built With
