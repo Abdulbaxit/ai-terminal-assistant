@@ -14,6 +14,7 @@ Built to return clear developer-focused terminal commands and explanations using
 
 - **Copy-to-Clipboard:** Instantly copy suggested commands with a single keystroke (`y`).
 - **Command Execution:** Run suggested commands directly from the assistant after confirmation.
+- **AI-Generated Commits:** Generate high-quality, conventional commit messages based on staged changes (`ask commit`).
 - **File Context:** Pass local files directly to the AI for debugging or refactoring (`-f <path>`).
 - **Interactive Mode:** Start a continuous conversation with the AI using `ask chat`.
 - **Command History:** View and manage past prompts and AI responses using `ask history`.
@@ -78,6 +79,13 @@ To view past commands and sessions, or to clear them, use **History**:
 ```bash
 ask history
 ask history --clear
+```
+
+### AI-Generated Commits
+Stop struggling with commit messages. Let the AI write them based on your code changes:
+```bash
+git add .
+ask commit
 ```
 
 You can also pass files to the AI for context using the `-f` or `--file` flag:

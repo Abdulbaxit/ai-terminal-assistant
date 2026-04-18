@@ -166,6 +166,72 @@ program
   });
 
 program
+  .command('commit')
+  .description('Generate an AI-powered commit message for your staged changes')
+  .action(async () => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('❌ OpenAI API Key is missing.'));
+      console.log(chalk.yellow('Please set it using: ask config --key <YOUR_KEY>'));
+      process.exit(1);
+    }
+
+    // Check if git is available and if we're in a repo
+    exec('git rev-parse --is-inside-work-tree', async (err, stdout) => {
+      if (err || stdout.trim() !== 'true') {
+        console.error(chalk.red('❌ Not a git repository or git is not installed.'));
+        return;
+      }
+
+      // Get staged changes
+      exec('git diff --cached', async (err, diff) => {
+        if (err) {
+          console.error(chalk.red('❌ Failed to get git diff.'));
+          return;
+        }
+
+        if (!diff) {
+          console.log(chalk.yellow('⚠️ No staged changes found. Use "git add" to stage changes first.'));
+          return;
+        }
+
+        const prompt = `Generate a concise, high-quality commit message following the Conventional Commits specification based on the following diff:\n\n${diff}\n\nReturn ONLY the commit message itself, no other text or markdown formatting.`;
+        
+        const response = await askAI(prompt, config.apiKey, config.model);
+        if (response) {
+          const message = response.trim().replace(/^["']|["']$/g, '');
+          
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const question = (query) => new Promise((resolve) => rl.question(query, resolve));
+
+          console.log(chalk.blue('\n--- Suggested Commit Message ---'));
+          console.log(chalk.white(message));
+          console.log(chalk.blue('--------------------------------\n'));
+
+          const answer = await question(chalk.green('🚀 Use this message and commit? (y/n) ') + chalk.gray('[y]: '));
+          
+          if (answer.toLowerCase() === 'y' || answer === '') {
+            exec(`git commit -m "${message.replace(/"/g, '\\"')}"`, (err, stdout, stderr) => {
+              if (err) {
+                console.error(chalk.red(`❌ Failed to commit: ${err.message}`));
+                return;
+              }
+              console.log(chalk.green('✅ Changes committed successfully!'));
+              if (stdout) console.log(stdout);
+            });
+          }
+          
+          rl.close();
+        }
+      });
+    });
+  });
+
+program
   .argument('[prompt...]', 'The question you want to ask the AI')
   .option('-f, --file <path>', 'Include a file as context for the AI')
   .action(async (promptArr, options) => {
