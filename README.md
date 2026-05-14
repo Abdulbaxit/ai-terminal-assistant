@@ -23,7 +23,7 @@ Built to return clear developer-focused terminal commands and explanations using
 - **Global Command:** Ask questions from absolutely any directory.
 - **Developer-Focused Prompting:** The AI acts as a senior engineer, skipping the conversational bloat and just giving you the exact command or answer you need
 - **Secure Configuration:** Safely stores your API key locally in the `~/.ask-ai-config.json` hidden file.
-- **Beautiful UI:** Uses `chalk` and `ora` for terminal coloring and loading states.
+- **Beautiful UI:** Uses `chalk` and `ora` for terminal coloring and loading states
 
 ## 🚀 Installation & Setup
 
